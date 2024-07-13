@@ -1,100 +1,129 @@
-import { transition } from '@angular/animations';
+// import { Component, OnInit } from '@angular/core';
+// import { DataService } from 'src/app/data.service';
+
+// @Component({
+//   selector: 'app-customer-transactions',
+//   templateUrl: '././customer-transuction.component.html',
+//   styleUrls: ['././customer-transuction.component.scss']
+// })
+// export class CustomerTransactionsComponent implements OnInit {
+
+//   customers: any;
+//   transaction: any;
+//   CT: any = {};
+
+//   newCustomers: any;
+
+//   constructor(private _DataService: DataService) { }
+//   ngOnInit(): void {
+//     this._DataService.getCustomers().subscribe({
+//       next: (data) => {
+//         console.log(this.customers = data)
+//         this.customers = data;
+
+
+//       }
+//     });
+//     this._DataService.getTransactions().subscribe({
+//       next: (data) => {
+//         console.log(this.transaction = data)
+//         this.transaction = data;
+//       }
+//     });
+
+
+
+//   }
+
+
+
+
+
+
+// }
+
+
 import { Component, OnInit } from '@angular/core';
+import { ChartData, ChartOptions } from 'chart.js';
 import { DataService } from 'src/app/data.service';
 
 @Component({
-  selector: 'app-customer-transuction',
+  selector: 'app-customer-transactions',
   templateUrl: './customer-transuction.component.html',
   styleUrls: ['./customer-transuction.component.scss']
 })
-export class CustomerTransuctionComponent implements OnInit {
+export class CustomerTransactionsComponent implements OnInit {
+
+  customers: any = [];
+  transactions: any = [];
+  CT: any = {};
+  newCustomers: any = [];
+
+
+
+
+
   constructor(private _DataService: DataService) { }
 
-  customers: any[] = [];
-  transactions: any[] = [];
-  filteredTransactions: any[] = [];
-  selectedCustomer: any = null;
-
-
-
-  // Chart options
-  view: [number, number] = [700, 400];
-  showXAxis = true;
-  showYAxis = true;
-  gradient = false;
-  showLegend = false;
-  showXAxisLabel = true;
-  xAxisLabel = 'Date';
-  showYAxisLabel = true;
-  yAxisLabel = 'Amount';
-  timeline = true;
-
-  chartData: any[] = [];
-
   ngOnInit(): void {
-
-    this._DataService.getCustomers().subscribe((data: any) => {
-      this.customers = data;
-    })
-
-    this._DataService.getTransactions().subscribe((data: any) => {
-      this.transactions = data;
-    })
-  };
-
-  // filterTransactions(customerId: number): void {
-  //   if (customerId) {
-  //     this.filteredTransactions = this.transactions.filter(
-  //       (transaction) => transaction.customer_id === customerId
-  //     );
-  //   } else {
-  //     this.filteredTransactions = this.transactions;
-  //   }
-  // }
-
-  // selectCustomer(customer: any): void {
-  //   this.selectedCustomer = customer;
-  //   this.filterTransactions(customer.id);
-  // }
-
-
-  filterTransaction(customerId: number): void {
-    if (customerId) {
-      this.filteredTransactions = this.transactions.filter(
-        (transaction) => transaction.customer_id === customerId
-      );
-    } else {
-      this.filteredTransactions = this.transactions;
-    }
-
-  }
-
-  selectCustomer(customer: any): void {
-    this.selectedCustomer = customer;
-    this.filterTransaction(customer.id);
-
-
-  }
-
-  updateChartData(): void {
-    const dataMap = new Map<string, number>();
-
-    for (const transaction of this.filteredTransactions) {
-      const date = transaction.date;
-      const amount = transaction.amount;
-      if (dataMap.has(date)) {
-        dataMap.set(date, dataMap.get(date)! + amount);
-      } else {
-        dataMap.set(date, amount);
+    this._DataService.getCustomers().subscribe({
+      next: (data) => {
+        this.customers = data;
+        this.newCustomers = [...this.newCustomers, ...this.customers];
       }
-    }
+    });
 
-    this.chartData = Array.from(dataMap.entries()).map(([name, value]) => ({ name, value }));
+    this._DataService.getTransactions().subscribe({
+      next: (data) => {
+        this.transactions = data;
+        // تحديث chartData بعد استرجاع البيانات
+        this.updateChartData();
+      }
+    });
   }
 
+  updateChartData() {
+    this.chartData = {
+      labels: this.transactions.map((transaction: any) => transaction.date),
+      datasets: [
+        {
+          label: 'Transaction Amount',
+          data: this.transactions.map((transaction: any) => transaction.amount),
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        }
+      ]
+    };
+  }
+
+
+  getTransactionsByCustomerId(customerId: number) {
+    return this.transactions.filter((transaction: any) => transaction.customer_id === customerId);
+  }
+
+  testFunction() {
+    const customerId = 1; // استخدم هنا الـ id الذي ترغب في البحث عنه
+    const relatedTransactions = this.getTransactionsByCustomerId(customerId);
+    console.log('Related Transactions for Customer ID', customerId, ':', relatedTransactions);
+  }
+
+
+
+  public chartData: ChartData<'line'> = {
+    labels: [],
+    datasets: [
+      {
+        label: 'Transaction Amount',
+        data: [],
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      }
+    ]
+  };
+  public chartOptions: ChartOptions = {
+    responsive: true,
+  };
 
 
 }
-
-
 
