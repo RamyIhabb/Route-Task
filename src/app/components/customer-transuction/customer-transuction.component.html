@@ -24,6 +24,13 @@
                     </tr>
                 </tbody>
             </table>
+            <div style="display: block;">
+                <ngx-charts-line-chart [view]="view" [scheme]="'cool'" [results]="chartData" [gradient]="gradient"
+                    [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel"
+                    [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
+                    [timeline]="timeline">
+                </ngx-charts-line-chart>
+            </div>
         </div>
     </div>
 </div>

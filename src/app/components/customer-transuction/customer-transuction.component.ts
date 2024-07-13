@@ -15,6 +15,22 @@ export class CustomerTransuctionComponent implements OnInit {
   filteredTransactions: any[] = [];
   selectedCustomer: any = null;
 
+
+
+  // Chart options
+  view: [number, number] = [700, 400];
+  showXAxis = true;
+  showYAxis = true;
+  gradient = false;
+  showLegend = false;
+  showXAxisLabel = true;
+  xAxisLabel = 'Date';
+  showYAxisLabel = true;
+  yAxisLabel = 'Amount';
+  timeline = true;
+
+  chartData: any[] = [];
+
   ngOnInit(): void {
 
     this._DataService.getCustomers().subscribe((data: any) => {
@@ -59,6 +75,23 @@ export class CustomerTransuctionComponent implements OnInit {
 
 
   }
+
+  updateChartData(): void {
+    const dataMap = new Map<string, number>();
+
+    for (const transaction of this.filteredTransactions) {
+      const date = transaction.date;
+      const amount = transaction.amount;
+      if (dataMap.has(date)) {
+        dataMap.set(date, dataMap.get(date)! + amount);
+      } else {
+        dataMap.set(date, amount);
+      }
+    }
+
+    this.chartData = Array.from(dataMap.entries()).map(([name, value]) => ({ name, value }));
+  }
+
 
 
 }
