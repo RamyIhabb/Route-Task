@@ -4,11 +4,13 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CustomerTransuctionComponent } from './components/customer-transuction/customer-transuction.component';
+import { ChartComponent } from './components/chart/chart.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CustomerTransuctionComponent
+    CustomerTransuctionComponent,
+    ChartComponent
   ],
   imports: [
     BrowserModule,
